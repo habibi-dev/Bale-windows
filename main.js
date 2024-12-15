@@ -149,6 +149,19 @@ class BaleApp {
     }
 
     initApp() {
+        const gotTheLock = app.requestSingleInstanceLock();
+        if (!gotTheLock) {
+            app.exit();
+            return;
+        }
+
+        app.on('second-instance', (event, commandLine, workingDirectory) => {
+            if (this.mainWindow) {
+                if (this.mainWindow.isMinimized()) this.mainWindow.restore();
+                this.mainWindow.focus();
+            }
+        });
+
         app.setLoginItemSettings({ openAtLogin: true });
 
         app.on('ready', () => {
