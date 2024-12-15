@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray, Menu, ipcMain, Notification } = require('electron');
+const {app, BrowserWindow, Tray, Menu, ipcMain, Notification} = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -46,7 +46,7 @@ class BaleApp {
 
     handleExternalLinks = (details) => {
         require('electron').shell.openExternal(details.url);
-        return { action: 'deny' };
+        return {action: 'deny'};
     }
 
     setupNotificationListener() {
@@ -56,7 +56,7 @@ class BaleApp {
             });
         `);
 
-        ipcMain.on('create-notification', (event, { title, body, icon }) => {
+        ipcMain.on('create-notification', (event, {title, body, icon}) => {
             try {
                 const notification = new Notification({
                     title: title,
@@ -115,12 +115,12 @@ class BaleApp {
     createTray() {
         this.tray = new Tray(this.getIconPath());
         const contextMenu = Menu.buildFromTemplate([
-            { label: 'نمایش', click: () => this.mainWindow.show() },
-            { label: 'خروج', click: () => app.exit() },
+            {label: 'نمایش', click: () => this.mainWindow.show()},
+            {label: 'خروج', click: () => app.exit()},
         ]);
 
         this.tray.setToolTip('Bale');
-        this.tray.setContextMenu(contextMenu);
+        this.tray.this.tray.setContextMenu(contextMenu);
         this.setupTrayEvents();
     }
 
@@ -157,7 +157,7 @@ class BaleApp {
             }
         });
 
-        app.setLoginItemSettings({ openAtLogin: true });
+        app.setLoginItemSettings({openAtLogin: true});
 
         app.on('ready', () => {
             this.createWindow();
