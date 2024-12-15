@@ -131,11 +131,6 @@ class BaleApp {
     }
 
     setupWindowEvents() {
-        this.mainWindow.on('minimize', (event) => {
-            event.preventDefault();
-            this.mainWindow.hide();
-        });
-
         this.mainWindow.on('close', (event) => {
             if (!app.isQuiting) {
                 event.preventDefault();
