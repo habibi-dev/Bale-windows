@@ -120,7 +120,7 @@ class BaleApp {
         ]);
 
         this.tray.setToolTip('Bale');
-        this.tray.this.tray.setContextMenu(contextMenu);
+        this.tray.setContextMenu(contextMenu);
         this.setupTrayEvents();
     }
 
