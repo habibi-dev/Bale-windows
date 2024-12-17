@@ -3,7 +3,7 @@ import semver from "semver";
 import {download} from 'electron-dl';
 import fs from "fs";
 import {exec} from 'child_process';
-import { fileURLToPath } from "url";
+import {fileURLToPath} from "url";
 import path from "path";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -40,6 +40,8 @@ class BaleApp {
 
         this.mainWindow.removeMenu();
 
+        this.contextMenu();
+
         this.mainWindow.webContents.setWindowOpenHandler(this.handleExternalLinks);
 
         this.mainWindow.loadURL('https://web.bale.ai/');
@@ -48,6 +50,17 @@ class BaleApp {
         this.setupPermissions();
         this.setupNotificationListener();
         this.injectCustomAssets();
+    }
+
+    contextMenu() {
+        this.mainWindow.webContents.on('context-menu', (event, params) => {
+            const contextMenu = Menu.buildFromTemplate([
+                {label: 'Copy', role: 'copy', enabled: params.editFlags.canCopy},
+                {label: 'Paste', role: 'paste', enabled: params.editFlags.canPaste},
+                {label: 'Select All', role: 'selectAll'},
+            ]);
+            contextMenu.popup();
+        });
     }
 
     handleExternalLinks = (details) => {
@@ -144,14 +157,34 @@ class BaleApp {
     }
 
     createTray() {
+        if (this.tray) {
+            this.tray.destroy();
+        }
+
+        let autoLaunchEnabled = app.getLoginItemSettings().openAtLogin;
+
         this.tray = new Tray(this.getIconPath());
+
+        const updateAutoLaunchStatus = () => {
+            autoLaunchEnabled = !autoLaunchEnabled;
+            app.setLoginItemSettings({
+                openAtLogin: autoLaunchEnabled,
+            });
+            this.createTray();
+        };
+
         const contextMenu = Menu.buildFromTemplate([
-            {label: 'نمایش', click: () => this.mainWindow.show()},
-            {label: 'خروج', click: () => app.exit()},
+            { label: 'نمایش', click: () => this.mainWindow.show() },
+            {
+                label: `اجرای خودکار: ${autoLaunchEnabled ? 'فعال' : 'غیرفعال'}`,
+                click: updateAutoLaunchStatus,
+            },
+            { label: 'خروج', click: () => app.exit() },
         ]);
 
         this.tray.setToolTip('Bale');
         this.tray.setContextMenu(contextMenu);
+
         this.setupTrayEvents();
     }
 
